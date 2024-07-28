@@ -21,6 +21,7 @@ job "poe-server" {
       port "http" {
         to = "8080"
       }
+      mode = "bridge"
     }
   }
 }
