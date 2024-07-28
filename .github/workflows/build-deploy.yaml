@@ -42,9 +42,9 @@ jobs:
     - name: Deploy to Nomad
       run: |
         mkdir -p .secrets
-        echo "{{ secrets.NOMAD_CACERT }}" > .secrets/nomad-ca.pem
-        echo "{{ secrets.NOMAD_CLIENT_CERT }}" > .secrets/nomad-client.pem
-        echo "{{ secrets.NOMAD_CLIENT_KEY }}" > .secrets/nomad-client-key.pem
+        echo "${{ secrets.NOMAD_CACERT }}" > .secrets/nomad-ca.pem
+        echo "${{ secrets.NOMAD_CLIENT_CERT }}" > .secrets/nomad-client.pem
+        echo "${{ secrets.NOMAD_CLIENT_KEY }}" > .secrets/nomad-client-key.pem
 
         envsubst < server.nomad > server.hcl
         nomad job run \
