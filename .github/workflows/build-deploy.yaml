@@ -8,6 +8,7 @@ on:
 
 jobs:
   build-and-deploy:
+    environment: production
     runs-on: ubuntu-latest
 
     steps:
@@ -40,7 +41,6 @@ jobs:
         sudo apt update -yq && sudo apt install -yq nomad
 
     - name: Deploy to Nomad
-      environment: production
       run: |
         mkdir -p .secrets
         echo "${{ secrets.NOMAD_CACERT }}" > .secrets/nomad-ca.pem
