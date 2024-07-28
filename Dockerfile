@@ -7,7 +7,7 @@ RUN apk update && apk add --no-cache bash \
     chromium \
     chromium-chromedriver
 
-COPY * /app/
+COPY . /app
 WORKDIR /app/
 RUN pip install --no-cache-dir /app/
 RUN rm -rf /app/
