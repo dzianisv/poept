@@ -5,8 +5,8 @@ job "poe-server" {
 
       # https://developer.hashicorp.com/nomad/docs/drivers/docker
       config {
-        image      = "${IMAGE_TAG}"
-        args       = ["python3", "-m", "poept.server"]
+        image = "${IMAGE_TAG}"
+        # args       = ["python3", "-m", "poept.server"]
         force_pull = true
       }
 
