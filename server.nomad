@@ -11,16 +11,14 @@ job "poe-server" {
         ports      = ["http"]
       }
 
-      resources {
-        network {
-          port "http" {
-            static = 8080
-          }
-        }
-      }
-
       env {
         POE_COOKIES = "${POE_COOKIES}"
+      }
+    }
+
+    network {
+      port "http" {
+        static = 8080
       }
     }
   }
