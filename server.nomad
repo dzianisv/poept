@@ -22,11 +22,5 @@ job "poe-server" {
         POE_COOKIES = "${POE_COOKIES}"
       }
     }
-
-    network {
-      port "http" {
-        static = 8080
-      }
-    }
   }
 }
