@@ -8,6 +8,7 @@ job "poe-server" {
         image = "${IMAGE_TAG}"
         # args       = ["python3", "-m", "poept.server"]
         force_pull = true
+        ports      = ["http"]
       }
 
       resources {
