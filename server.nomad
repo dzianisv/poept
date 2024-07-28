@@ -1,6 +1,6 @@
 job "poe-server" {
   group "group-1" {
-    task "http-server" {
+    task "api-server" {
       driver = "docker"
 
       # https://developer.hashicorp.com/nomad/docs/drivers/docker
