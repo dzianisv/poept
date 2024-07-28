@@ -8,6 +8,7 @@ on:
 
 jobs:
   build-and-deploy:
+    # https://docs.github.com/en/actions/deployment/about-deployments/deploying-with-github-actions
     environment: production
     runs-on: ubuntu-latest
 

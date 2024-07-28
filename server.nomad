@@ -11,7 +11,7 @@ job "poe-server" {
       }
 
       env {
-        POE_COOKIES = "${POE_COOKIES}"
+        POE_COOKIES = '${POE_COOKIES}'
       }
     }
   }
