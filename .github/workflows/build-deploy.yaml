@@ -50,7 +50,7 @@ jobs:
 
         envsubst < server.nomad > server.hcl
         nomad job run \
-          -address="${{ secrets.NOMAD_ADDRESS }}" \
+          -address="${{ secrets.NOMAD_ADDR }}" \
           -ca-cert=".secrets/nomad-ca.pem" \
           -client-cert=".secrets/nomad-client.pem" \
           -client-key=".secrets/nomad-client-key.pem" \
