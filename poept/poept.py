@@ -15,6 +15,7 @@ from typing import Optional
 from .tools import click, enter, speech, record
 import logging
 import json
+import base64
 from urllib.parse import urlparse
 
 class BotNotFound(Exception):
@@ -69,7 +70,7 @@ class PoePT:
         self.cookies = None
 
         if cookies is not None:
-            self.cookies = json.loads(cookies)
+            self.cookies = json.loads(base64.decode(cookies))
 
         if self.cookies is None:
             self.cookies = self.read_cookies()
