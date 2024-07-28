@@ -42,16 +42,17 @@ jobs:
     - name: Deploy to Nomad
       run: |
         mkdir -p .secrets
-        cat << "{{ secrets.NOMAD_CACERT }}" > .secrets/nomad-ca.pem
-        cat << "{{ secrets.NOMAD_CLIENT_CERT }}" > .secrets/nomad-client.pem
-        cat << "{{ secrets.NOMAD_CLIENT_KEY }}" > .secrets/nomad-client-key.pem
+        echo "{{ secrets.NOMAD_CACERT }}" > .secrets/nomad-ca.pem
+        echo "{{ secrets.NOMAD_CLIENT_CERT }}" > .secrets/nomad-client.pem
+        echo"{{ secrets.NOMAD_CLIENT_KEY }}" > .secrets/nomad-client-key.pem
 
         envsubst < server.nomad > server.hcl
-        nomad job run server.hcl
+        nomad job run \
+          -address="${{ secrets.NOMAD_ADDRESS }}" \
+          -ca-cert=".secrets/nomad-ca.pem" \
+          -client-cert=".secrets/nomad-client.pem" \
+          -client-key=".secrets/nomad-client-key.pem" \
+          server.hcl
       env:
-        NOMAD_CACERT: .secrets/nomad-ca.pem
-        NOMAD_CLIENT_CERT: .secrets/nomad-client.pem
-        NOMAD_CLIENT_KEY: .secrets/nomad-client-key.pem
-        NOMAD_ADDR: ${{ secrets.NOMAD_ADDR }}
         POE_COOKIES: ${{ secrets.POE_COOKIES }}
         IMAGE_TAG: ghcr.io/${{ github.repository }}/poe-server:${{ github.ref_name }}
