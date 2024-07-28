@@ -5,8 +5,7 @@ job "poe-server" {
 
       # https://developer.hashicorp.com/nomad/docs/drivers/docker
       config {
-        image = "${IMAGE_TAG}"
-        # args       = ["python3", "-m", "poept.server"]
+        image      = "${IMAGE_TAG}"
         force_pull = true
         ports      = ["http"]
       }
@@ -16,9 +15,11 @@ job "poe-server" {
       }
     }
 
+    # Setup port mapping here
+    # https://developer.hashicorp.com/nomad/docs/drivers/docker#using-the-port-map
     network {
       port "http" {
-        static = 8080
+        to = "8080"
       }
     }
   }
