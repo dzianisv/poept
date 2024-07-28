@@ -10,6 +10,20 @@ job "poe-server" {
         force_pull = true
       }
 
+      resources {
+        network {
+          port "http" {
+            static = 8080
+          }
+        }
+      }
+
+      network {
+        port "http" {
+          static = 8080
+        }
+      }
+
       env {
         POE_COOKIES = "${POE_COOKIES}"
       }
