@@ -53,7 +53,7 @@ class PoePT:
     alternative_cookies_file_path: str = os.path.realpath("./poept.cookies.json")
 
     def __init__(self,
-            cookies: Optional[str] = os.environ.get("POE_COOKIE"),
+            cookies: Optional[str] = os.environ.get("POE_COOKIES"),
             email: Optional[str] = os.environ.get("POE_EMAIL"),
             headless: bool = os.environ.get("POE_HEADLESS", "true") == "true",
         ):
@@ -78,7 +78,8 @@ class PoePT:
         self.cookies = None
 
         if cookies is not None:
-            self.cookies = json.loads(base64.decode(cookies))
+            self.cookies = json.loads(base64.decodebytes(cookies.encode('utf8')))
+            logger.info("Used passed cookies")
 
         if self.cookies is None:
             self.cookies = self.read_cookies()
