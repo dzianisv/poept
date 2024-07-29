@@ -3,23 +3,6 @@ job "poe-server" {
     task "api-server" {
       driver = "docker"
 
-      service {
-        port = "http"
-        check {
-          type     = "http"
-          name     = "app_health"
-          path     = "/health"
-          interval = "20s"
-          timeout  = "5s"
-
-          check_restart {
-            limit           = 3
-            grace           = "90s"
-            ignore_warnings = false
-          }
-        }
-      }
-
       # https://developer.hashicorp.com/nomad/docs/drivers/docker
       config {
         image      = "${IMAGE_TAG}"
