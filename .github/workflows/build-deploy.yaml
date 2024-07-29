@@ -56,7 +56,7 @@ jobs:
           -client-key=".secrets/nomad-client-key.pem" \
           server.hcl
       env:
-        NOMAD_PORT_http: $NOMAD_PORT_http
+        NOMAD_PORT_http: ${NOMAD_PORT_http}
         NOMAD_TLS_SERVER_NAME: 127.0.0.1
         POE_COOKIES: ${{ secrets.POE_COOKIES }}
         IMAGE_TAG: ghcr.io/${{ github.repository }}/poe-server:${{ github.ref_name }}

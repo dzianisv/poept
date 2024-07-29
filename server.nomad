@@ -20,6 +20,7 @@ job "poe-server" {
     # https://developer.hashicorp.com/nomad/docs/drivers/docker#using-the-port-map
     network {
       port "http" {}
+      mode = "host"
     }
   }
 }
