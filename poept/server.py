@@ -151,8 +151,8 @@ def main():
     logging.basicConfig(level=logging.INFO)
     loop = asyncio.get_event_loop()
     app = loop.run_until_complete(serve())
-    logger.info("Starting API server on %s:%d", args.host, args.port)
-    web.run_app(app, host=args.host, port=args.port)
+    logger.info("Starting API server on %s:%d", args.hostname, args.port)
+    web.run_app(app, host=args.hostname, port=args.port)
 
 if __name__ == "__main__":
     main()
