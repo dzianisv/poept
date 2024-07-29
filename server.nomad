@@ -19,7 +19,7 @@ job "poe-server" {
     # Setup port mapping here
     # https://developer.hashicorp.com/nomad/docs/drivers/docker#using-the-port-map
     network {
-      port "http" {}
+      port "http" { static = 8080 }
       mode = "host"
     }
   }
