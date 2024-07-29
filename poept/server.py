@@ -125,12 +125,12 @@ async def handle_health(request):
 # Setup and run the server
 async def serve():
     auth_tokens = os.getenv('POE_AUTH_TOKENS')
-    middlewares=[]
+
+    middlewares=[auth_middleware] if auth_tokens else []
+    app = web.Application(middlewares=middlewares, client_max_size=1024**4)
     if auth_tokens:
         app['auth_tokens'] = {token.strip() for token in auth_tokens.split(',') if token.strip()}
-        middlewares.append(auth_middleware)
 
-    app = web.Application(middlewares=middlewares, client_max_size=1024**4)
     app.router.add_post('/chat/completions', handle_chat_completions)
     app.router.add_post('/completions', handle_completions)
     app.router.add_get("/health", handle_health)
