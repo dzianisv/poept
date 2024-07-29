@@ -59,4 +59,5 @@ jobs:
         NOMAD_PORT_http: ${NOMAD_PORT_http}
         NOMAD_TLS_SERVER_NAME: 127.0.0.1
         POE_COOKIES: ${{ secrets.POE_COOKIES }}
+        POE_AUTH_TOKENS: ${{ secrets.POE_AUTH_TOKENS }}
         IMAGE_TAG: ghcr.io/${{ github.repository }}/poe-server:${{ github.sha }}
