@@ -16,4 +16,4 @@ RUN rm -rf /app/
 RUN addgroup -S service && adduser -S service -G service
 USER service
 EXPOSE 8080
-CMD ["xvfb-run", "-a", "python3", "-m", "poept.server"]
+CMD ["python3", "-m", "poept.server"]
