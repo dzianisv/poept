@@ -9,7 +9,7 @@ def get_api_client(
     ):
     return OpenAI(
             openai_api_base=api_base,
-            openai_api_key="no",
+            openai_api_key=api_key,
             model=model
     )
 
