@@ -3,9 +3,8 @@ job "poe-server" {
     task "api-server" {
       driver = "docker"
 
-      server {
+      service {
         port = "http"
-
         check {
           type     = "http"
           name     = "app_health"
