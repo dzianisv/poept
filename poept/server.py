@@ -147,10 +147,15 @@ async def handle_completions(request):
         }
     })
 
+async def handle_health(request):
+    return web.json_response({"status": "ok"})
+
+
 async def serve():
     app = web.Application(client_max_size=1024**4)
     app.router.add_post('/chat/completions', handle_chat_completions)
     app.router.add_post('/completions', handle_completions)
+    app.router.add_host("/health", handle_health)
     app['llm'] = PoePT()
     app['thread_executor'] = concurrent.futures.ThreadPoolExecutor(max_workers=1)
     return app
@@ -164,6 +169,7 @@ def main():
     logging.basicConfig(level=logging.INFO)
     loop = asyncio.get_event_loop()
     app = loop.run_until_complete(serve())
+    logger.info("Starting API server on %s:%d", args.host, args.port)
     web.run_app(app, host=args.host, port=args.port)
 
 if __name__ == "__main__":
