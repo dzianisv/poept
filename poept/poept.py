@@ -52,11 +52,19 @@ class PoePT:
     cookies_file_path: str = os.path.expanduser("~/.cache/poept.cookies.json")
     alternative_cookies_file_path: str = os.path.realpath("./poept.cookies.json")
 
-    def __init__(self, cookies: Optional[str] = os.environ.get("POE_COOKIE"), email: Optional[str] = os.environ.get("POE_EMAIL"), headless: bool = os.environ.get("POE_HEADLESS", "true") == "true"):
+    def __init__(self,
+            cookies: Optional[str] = os.environ.get("POE_COOKIE"),
+            email: Optional[str] = os.environ.get("POE_EMAIL"),
+            headless: bool = os.environ.get("POE_HEADLESS", "true") == "true",
+        ):
         chrome_options = Options()
         if headless:
             chrome_options.add_argument("--headless")
+            chrome_options.add_argument("--no-sandbox")
+            chrome_options.add_argument("--disable-gpu")
+
         chrome_options.add_argument("--log-level=3")
+        chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--disable-infobars")
         chrome_options.add_argument("--disable-extensions")
         chrome_options.add_argument("--disable-notifications")
