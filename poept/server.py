@@ -19,6 +19,7 @@ async def auth_middleware(app, handler):
 
         token = auth_header[7:]
         if token not in app['auth_tokens']:
+            logger.warning("Rejected the user authentication token: %s", token)
             return web.json_response({"error": "Forbidden"}, status=403)
 
         return await handler(request)
