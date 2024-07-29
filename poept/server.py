@@ -2,46 +2,30 @@
 
 import argparse
 import asyncio
-from aiohttp import web
 import logging
+import os
+from aiohttp import web
 import concurrent.futures
 from poept import PoePT
 
 logger = logging.getLogger(__name__)
 
-# POST /completions HTTP/1.1
-# Host: localhost:8080
-# Accept-Encoding: gzip, deflate, br
-# Connection: keep-alive
-# Accept: application/json
-# Content-Type: application/json
-# User-Agent: OpenAI/Python 1.35.12
-# X-Stainless-Lang: python
-# X-Stainless-Package-Version: 1.35.12
-# X-Stainless-OS: MacOS
-# X-Stainless-Arch: x64
-# X-Stainless-Runtime: CPython
-# X-Stainless-Runtime-Version: 3.12.4
-# Authorization: Bearer no
-# X-Stainless-Async: false
-# Content-Length: 180
+# Authentication middleware
+async def auth_middleware(app, handler):
+    async def middleware_handler(request):
+        auth_header = request.headers.get('Authorization', None)
+        if auth_header is None or not auth_header.startswith('Bearer '):
+            return web.json_response({"error": "Unauthorized"}, status=401)
 
-# {"model": "gpt-3.5-turbo-instruct", "prompt": ["hello"], "frequency_penalty": 0, "logit_bias": {}, "max_tokens": 256, "n": 1, "presence_penalty": 0, "temperature": 0.7, "top_p": 1}HTTP/1.1 404 Not Found
-# Content-Type: text/plain; charset=utf-8
-# Content-Length: 14
-# Date: Sun, 28 Jul 2024 11:19:36 GMT
-# Server: Python/3.12 aiohttp/3.9.5
+        token = auth_header[7:]
+        if token not in app['auth_tokens']:
+            return web.json_response({"error": "Forbidden"}, status=403)
 
-# or
-# POST /chat/completions HTTP/1.1
+        return await handler(request)
 
-# {"messages": [{"content": "hello", "role": "user"}], "model": "gpt-3.5-turbo", "n": 1, "stream": false, "temperature": 0.7}HTTP/1.1 404 Not Found
-# Content-Type: text/plain; charset=utf-8
-# Content-Length: 14
-# Date: Sun, 28 Jul 2024 11:12:56 GMT
-# Server: Python/3.12 aiohttp/3.9.5
+    return middleware_handler
 
-
+# Handlers
 async def handle_chat_completions(request):
     try:
         data = await request.json()
@@ -50,19 +34,13 @@ async def handle_chat_completions(request):
         return web.json_response({"error": "Invalid JSON"}, status=400)
 
     model = data.get('model', 'gpt4o')
-
     messages = data.get('messages', [])
     if not messages:
         return web.json_response({"error": "Messages are required"}, status=400)
 
     prompt = " ".join([message["content"] for message in messages if message["role"] == "user"])
-
     if not prompt:
         return web.json_response({"error": "User message is required"}, status=400)
-
-    # max_tokens = data.get('max_tokens', 100)
-    # temperature = data.get('temperature', 1.0)
-    # n = data.get('n', 1)
 
     llm = request.app['llm']
     executor = request.app['thread_executor']
@@ -74,7 +52,6 @@ async def handle_chat_completions(request):
     except Exception as e:
         logger.error(f"LLM execution error: {e}")
         return web.json_response({"error": "Internal server error"}, status=500)
-
     # https://platform.openai.com/docs/api-reference/chat/create
     return web.json_response({
         "id": llm.get_chat_id(),
@@ -112,10 +89,6 @@ async def handle_completions(request):
 
     prompt = " ".join(prompt)
 
-    # max_tokens = data.get('max_tokens', 100)
-    # temperature = data.get('temperature', 1.0)
-    # n = data.get('n', 1)
-
     llm = request.app['llm']
     executor = request.app['thread_executor']
 
@@ -126,8 +99,7 @@ async def handle_completions(request):
     except Exception as e:
         logger.error(f"LLM execution error: {e}")
         return web.json_response({"error": "Internal server error"}, status=500)
-
-    # https://platform.openai.com/docs/api-reference/completions/create?lang=curl
+    # https://platform.openai.com/docs/api-reference/completions/create?lang=curls
     return web.json_response({
         "id": llm.get_chat_id(),
         "object": "text_completion",
@@ -150,14 +122,18 @@ async def handle_completions(request):
 async def handle_health(request):
     return web.json_response({"status": "ok"})
 
-
+# Setup and run the server
 async def serve():
-    app = web.Application(client_max_size=1024**4)
+    app = web.Application(middlewares=[auth_middleware], client_max_size=1024**4)
     app.router.add_post('/chat/completions', handle_chat_completions)
     app.router.add_post('/completions', handle_completions)
     app.router.add_get("/health", handle_health)
     app['llm'] = PoePT()
     app['thread_executor'] = concurrent.futures.ThreadPoolExecutor(max_workers=1)
+
+    auth_tokens = os.getenv('POE_AUTH_TOKENS', '')
+    app['auth_tokens'] = {token.strip() for token in auth_tokens.split(',') if token.strip()}
+
     return app
 
 def main():
