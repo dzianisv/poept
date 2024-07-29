@@ -8,7 +8,7 @@ job "poe-server" {
         image      = "${IMAGE_TAG}"
         force_pull = true
         ports      = ["http"]
-        args       = ["python3", "-m", "poept.server", "--host", "0.0.0.0", "--port", "${NOMAD_PORT_http}"]
+        args       = ["python3", "-m", "poept.server", "--hostname", "0.0.0.0", "--port", "${NOMAD_PORT_http}"]
       }
 
       env {
