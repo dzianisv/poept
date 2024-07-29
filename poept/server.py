@@ -124,15 +124,19 @@ async def handle_health(request):
 
 # Setup and run the server
 async def serve():
-    app = web.Application(middlewares=[auth_middleware], client_max_size=1024**4)
+    auth_tokens = os.getenv('POE_AUTH_TOKENS')
+    middlewares=[]
+    if auth_tokens:
+        app['auth_tokens'] = {token.strip() for token in auth_tokens.split(',') if token.strip()}
+        middlewares.append(auth_middleware)
+
+    app = web.Application(middlewares=middlewares, client_max_size=1024**4)
     app.router.add_post('/chat/completions', handle_chat_completions)
     app.router.add_post('/completions', handle_completions)
     app.router.add_get("/health", handle_health)
     app['llm'] = PoePT()
     app['thread_executor'] = concurrent.futures.ThreadPoolExecutor(max_workers=1)
 
-    auth_tokens = os.getenv('POE_AUTH_TOKENS', '')
-    app['auth_tokens'] = {token.strip() for token in auth_tokens.split(',') if token.strip()}
 
     return app
 
