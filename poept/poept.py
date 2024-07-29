@@ -79,7 +79,7 @@ class PoePT:
 
         if cookies is not None:
             self.cookies = json.loads(base64.decodebytes(cookies.encode('utf8')))
-            logger.info("Used passed cookies")
+            logger.info("Using passed cookies")
 
         if self.cookies is None:
             self.cookies = self.read_cookies()
